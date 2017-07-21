@@ -1,3 +1,4 @@
+!program to diagonalize the position operator in case of quantum harmonic oscillator using ladder technique
 program Q_SHO
    implicit none
    integer::m,flag
