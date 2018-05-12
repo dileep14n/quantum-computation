@@ -1,7 +1,7 @@
 program multi_schmidt_decom
 implicit none
 
-integer,parameter::k=2                           
+integer,parameter::k=4                           
 integer::i,j,m1,n1,m4,n4,l,INFO,s                    
 real,dimension(0:1,0:1)::p1,P,P2                              
 real,dimension(0:2**k-1,0:0)::psi
@@ -15,15 +15,15 @@ id(0,0)=1
 id(0,1)=0
 id(1,0)=0
 id(1,1)=1
-!psi(0:11,0)=(/1.0/sqrt(8.0),1.0/sqrt(8.0),0.0,0.0,1.0/sqrt(8.0),1.0/sqrt(8.0),0.0,0.0,0.0,0.0,0.0,0.0/)
-!psi(12:25,0)=(/0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0/)
-!psi(26:31,0)=(/1.0/sqrt(8.0),-1.0/sqrt(8.0),0.0,0.0,-1.0/sqrt(8.0),1.0/sqrt(8.0)/)
-psi(0:3,0)=(/1.0/sqrt(2.0),0.0,0.0,1.0/sqrt(2.0)/)
+psi(0:11,0)=(/1.0/sqrt(8.0),1.0/sqrt(8.0),0.0,0.0,1.0/sqrt(8.0),1.0/sqrt(8.0),0.0,0.0,0.0,0.0,0.0,0.0/)
+psi(12:25,0)=(/0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0/)
+psi(26:31,0)=(/1.0/sqrt(8.0),-1.0/sqrt(8.0),0.0,0.0,-1.0/sqrt(8.0),1.0/sqrt(8.0)/)
+!psi(0:3,0)=(/1.0/sqrt(2.0),0.0,0.0,1.0/sqrt(2.0)/)
 rhoABCDE=matmul(psi,transpose(psi))
 do s=1,k
 allocate(B1(0:2**(s-1)-1,0:2**(s-1)-1))
 allocate(B2(0:2**(k-s)-1,0:2**(k-s)-1))
-!if(s==r1)then
+if(s==r1)then
 do i=0,2**(s-1)-1,1
 do j=0,2**(s-1)-1,1
 if (i==j) then

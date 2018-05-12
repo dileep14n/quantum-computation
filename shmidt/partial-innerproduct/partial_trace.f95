@@ -1,7 +1,7 @@
 program multi_schmidt_decom
 implicit none
 
-integer,parameter::k=3,r1=1                                !k is no of qubits
+integer,parameter::k=3,r1=2                                !k is no of qubits
 integer::i,j,m1,n1,m4,n4,l,INFO,s                            ! if r1 =1 rhoA is caluculated and is stored in P, same for rhoB(r1=2), rhoc(r1=3) so on..
 real,dimension(0:1,0:1)::p1,P                              !psi is any arbitrary column vector
 real,dimension(0:2**k-1,0:0)::psi

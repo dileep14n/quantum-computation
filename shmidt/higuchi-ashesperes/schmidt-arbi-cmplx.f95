@@ -1,8 +1,8 @@
 program gdv
 implicit none
 integer,parameter::k=3
-complex*16,dimension(0:1,0:k-1)::B1,A2,W1,W5,G1,G0,G2,U1,U2,W,A12
-double precision,dimension(0:1,0:k-1)::A1,A11
+complex*16,dimension(0:1,0:k-1)::W1,W5,G1,G0,G2,U1,U2,W,A12,B12
+double precision,dimension(0:1,0:k-1)::A1,A11,A2,A22,B1,B11
 complex*16,dimension(0:2**k-1,0:0)::B2,psi,psi2,B3,B4,B5,A5,B6,A6,B7
 complex*16,dimension(0:0,0:0)::r1,s1,k2,v1,v2,E,E1
 complex*16,dimension(0:1,0:1)::sig_x,Id,Hd
@@ -33,27 +33,34 @@ do i=0,k-1
 x(i)=0  
 enddo
 
-do m=0,99999                                               !loop for generating random numbers starts here
+do m=0,99999999                                               !loop for generating random numbers starts here
 
 do i=0,1,1
 do j=0,k-1
 call random_number(A1(i,j))                                 !A1(0:2,0:k-1) stores random vector columns
 call random_number(A11(i,j))
-A12(i,j)=cmplx(A1(i,j),A11(i,j))
-!A2(i,j)=sqrt(-2*log(A12(i,j)))*cos(8*atan(1.0)*A12(i,j))      ! box muller transformation of A1 elements are in A2
+!A12(i,j)=cmplx(A1(i,j),A11(i,j))
+A2(i,j)=sqrt(-2*log(A1(i,j)))*cos(8*atan(1.0)*A1(i,j))
+A22(i,j)=sqrt(-2*log(A11(i,j)))*cos(8*atan(1.0)*A11(i,j))
 enddo
 enddo
 
 do i=0,k-1
-B1(0,i)=A2(0,i)/sqrt((real(A2(0,i))**2+real(A2(1,i)**2))+aimag(A2(0,i)**2)+aimag(A2(1,i)**2))                 !columns of A2 are normalized and are in B1
-B1(1,i)=A2(1,i)/sqrt((real(A2(0,i))**2+real(A2(1,i)**2))+aimag(A2(0,i)**2)+aimag(A2(1,i)**2))
+B1(0,i)=A2(0,i)/sqrt(A2(0,i)**2+A2(1,i)**2+A22(0,i)**2+A22(1,i)**2)
+B1(1,i)=A2(1,i)/sqrt(A2(0,i)**2+A2(1,i)**2+A22(0,i)**2+A22(1,i)**2)
+B11(0,i)=A22(0,i)/sqrt(A2(0,i)**2+A2(1,i)**2+A22(0,i)**2+A22(1,i)**2)
+B11(1,i)=A22(1,i)/sqrt(A2(0,i)**2+A2(1,i)**2+A22(0,i)**2+A22(1,i)**2)
 enddo
-call tensor_pro(B1,B2)                        ! tensor product of all unit columns are contained in B2(0:2**k-1,0:0)
+do i=0,1
+do j=0,k-1
+B12(i,j)=cmplx(B1(i,j),B11(i,j))
+enddo
+enddo
+call tensor_pro(B12,B2)    
 r1=matmul(conjg(transpose(B2)),psi)                              !r1 is inner product 
 r2=r1(0,0)
-if(real(r2)**2>real(r3)**2.and.aimag(r2)==0.and.aimag(r3)==0)then                               ! condition to find unit vectors corresponding to maximized innerproduct 
+if(real(r2)>real(r3).and.abs(aimag(r2))<0.000001)then                               ! condition to find unit vectors corresponding to maximized innerproduct 
 r3=r2
-print*,r2
 
 !do i=0,k-1
 !W1(0:1,i:i)=B1(0:1,i:i)                                    ! if condition is true, store all columns of B1 in W1
@@ -61,7 +68,8 @@ print*,r2
 else
 continue
 endif
-enddo                                                     ! loop for generating random_numbers ends here
+enddo
+print*,aimag(r3),real(r3)                                                     ! loop for generating random_numbers ends here
 !call gramschmidt(W1,G2)                   ! columns of G2 contain orthonormal unit vectors of columns corresponding to W1    
 !do i=0,2**k-1
 !A5(i,0)=0
@@ -99,7 +107,7 @@ enddo                                                     ! loop for generating 
 !enddo
 
 !enddo
-print*,r3
+!print*,r3
 
 do i=0,2**k-1
 write(123,*),rho1(:,i)
